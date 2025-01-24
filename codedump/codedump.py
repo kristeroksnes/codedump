@@ -104,7 +104,7 @@ def should_skip(path):
         'project.toml', 'manifest.toml', 'juliaconfig.toml',
         # JavaScript/TypeScript
         '.npmignore', '.babelrc', '.eslintrc', '.prettierrc', 
-        'tslint.json', 'webpack.config.js', 'package-lock.json', 'yarn.lock',
+        'tslint.json', 'webpack.config.js', 'package-lock.json', 'yarn.lock','schema.prisma'
         # Ruby
         'gemfile', 'rakefile',
         # PHP
