@@ -35,7 +35,7 @@ def should_skip(path):
         # Web
         '.html', '.htm', '.css', '.scss', '.sass', '.less',
         # Java and JVM languages
-        '.java', '.kt', '.kts', '.groovy', '.scala', '.clj', '.cljs', '.prisma'
+        '.java', '.kt', '.kts', '.groovy', '.scala', '.clj', '.cljs', '.prisma',
         # .NET languages
         '.cs', '.fs', '.vb',
         # Ruby
