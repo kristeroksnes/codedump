@@ -3,7 +3,7 @@ import datetime
 import pyperclip
 import re
 import sys
-import argparse  # Add this import
+import argparse
 
 def get_file_info(file_path):
     """Get file information including size and last modified time."""
@@ -104,15 +104,15 @@ def should_skip(path):
         'project.toml', 'manifest.toml', 'juliaconfig.toml',
         # JavaScript/TypeScript
         '.npmignore', '.babelrc', '.eslintrc', '.prettierrc', 
-        'tslint.json', 'webpack.config.js', 'yarn.lock','schema.prisma',
+        'tslint.json', 'webpack.config.js', 'schema.prisma',
         # Ruby
         'gemfile', 'rakefile',
         # PHP
-        'composer.json', 'composer.lock',
+        'composer.json',
         # Go
-        'go.mod', 'go.sum',
+        'go.mod',
         # Rust
-        'cargo.toml', 'cargo.lock',
+        'cargo.toml',
         # .NET
         'packages.config', 'nuget.config',
         # Java
@@ -128,9 +128,9 @@ def should_skip(path):
         # Elm
         'elm.json',
         # F#
-        'paket.dependencies', 'paket.lock',
+        'paket.dependencies',
         # Elixir
-        'mix.exs', 'mix.lock',
+        'mix.exs',
         # Erlang
         'rebar.config',
         # MATLAB/Octave
@@ -169,6 +169,16 @@ def should_skip(path):
         r'\.temp$',
         r'\.swp$',
         r'~$',
+        r'package-lock\.json$',  # NPM package lock
+        r'yarn\.lock$',          # Yarn lock
+        r'pnpm-lock\.yaml$',     # PNPM lock
+        r'composer\.lock$',      # Composer lock
+        r'cargo\.lock$',         # Cargo lock
+        r'poetry\.lock$',        # Poetry lock
+        r'Gemfile\.lock$',       # Bundler lock
+        r'paket\.lock$',         # Paket lock
+        r'mix\.lock$',           # Mix lock
+        r'go\.sum$',             # Go modules sum
     ]
     
     if os.path.isdir(path):
