@@ -4,6 +4,8 @@ import pyperclip
 import re
 import sys
 import argparse
+import tempfile
+import subprocess
 
 def get_file_info(file_path):
     """Get file information including size and last modified time."""
@@ -226,17 +228,70 @@ def concatenate_files(directory='.', list_only=False):
     
     return '\n'.join(output)
 
+def safe_copy_to_clipboard(text):
+    """Copy text to clipboard, using a file-based approach if the text is too large."""
+    try:
+        # Try the direct approach first
+        pyperclip.copy(text)
+        print("Content copied to clipboard successfully.")
+    except OSError as e:
+        if "Argument list too long" in str(e):
+            # Create a temporary file
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"codedump_{timestamp}.txt"
+            
+            with open(filename, 'w', encoding='utf-8') as f:
+                f.write(text)
+            
+            print(f"\nContent too large for clipboard. Saved to file: {filename}")
+            
+            # Try alternative clipboard methods
+            try:
+                # Try xclip (X11)
+                subprocess.run(['xclip', '-selection', 'clipboard'], input=text.encode('utf-8'), check=False)
+                print("Successfully copied using xclip.")
+                return
+            except (subprocess.SubprocessError, FileNotFoundError):
+                pass
+                
+            try:
+                # Try wl-copy (Wayland)
+                subprocess.run(['wl-copy'], input=text.encode('utf-8'), check=False)
+                print("Successfully copied using wl-copy.")
+                return
+            except (subprocess.SubprocessError, FileNotFoundError):
+                pass
+                
+            # Provide instructions for manual copying
+            print("To copy the content to clipboard, use one of these commands:")
+            print(f"  cat {filename} | xclip -selection clipboard     # X11")
+            print(f"  cat {filename} | wl-copy                        # Wayland")
+        else:
+            # Different error, re-raise
+            raise
+
 def main():
     parser = argparse.ArgumentParser(description='Concatenate files in a directory.')
     parser.add_argument('directory', nargs='?', default='.', help='Directory to process (default: current directory)')
     parser.add_argument('-l', '--list-only', action='store_true', help='Only list file paths without content')
+    parser.add_argument('-f', '--file', action='store_true', help='Save to file instead of copying to clipboard')
     
     args = parser.parse_args()
     
     result = concatenate_files(args.directory, args.list_only)
     print(result)
-    pyperclip.copy(result)
-    print(f"\nOutput for directory '{args.directory}' has been copied to clipboard.")
+    
+    if args.file:
+        # Save to file directly
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"codedump_{timestamp}.txt"
+        with open(filename, 'w', encoding='utf-8') as f:
+            f.write(result)
+        print(f"\nOutput for directory '{args.directory}' has been saved to {filename}.")
+    else:
+        # Try to copy to clipboard
+        safe_copy_to_clipboard(result)
+        print(f"\nOutput for directory '{args.directory}' processed.")
 
 if __name__ == '__main__':
     main()
